@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Neat Notes</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="activity_main">All Notes</string>
+    <string name="no_notes">Click Add to write a new note!</string>
+
+    <string name="note_title">Title</string>
+    <string name="enter_title">Enter a Title</string>
+    <string name="note_text">Note</string>
+    <string name="enter_note">Enter a Note</string>
+</resources>
