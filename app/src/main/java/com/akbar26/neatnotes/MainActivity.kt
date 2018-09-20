@@ -34,6 +34,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        LoadQuery("%")
+    }
+
 //    override fun onCreateOptionsMenu(menu: Menu): Boolean {
 //        // Inflate the menu; this adds items to the action bar if it is present.
 //        menuInflater.inflate(R.menu.menu_main, menu)
@@ -85,10 +90,37 @@ class MainActivity : AppCompatActivity() {
             var myNote = notesListAdapter[position]
             myView.title_text_view.text = myNote.nodeName
             myView.note_text_view.text = myNote.nodeDesc
-            //delete and edit note button click will go here if needed (47)
-            myView.title_text_view.setOnClickListener {
+
+
+            //edit button action
+            myView.editBtn.setOnClickListener {
                 GoToUpdateFun(myNote)
             }
+
+            //share button action
+            myView.shareBtn.setOnClickListener {
+                //get title
+                val title = myView.title_text_view.text.toString()
+                //get description
+                val desc = myView.note_text_view.text.toString()
+                //concatenate
+                val s = title +"\n"+ desc
+                //share intent
+                val shareIntent = Intent()
+                shareIntent.action = Intent.ACTION_SEND
+                shareIntent.type = "text/plain"
+                shareIntent.putExtra(Intent.EXTRA_TEXT, s)
+                startActivity(Intent.createChooser(shareIntent, s))
+            }
+
+            //delete button action
+            myView.deleteBtn.setOnClickListener {
+                var dbManager = DbManager(this.context!!)
+                val selectionArgs = arrayOf(myNote.nodeId.toString())
+                dbManager.delete("ID=?", selectionArgs)
+                LoadQuery("%")
+            }
+
             return myView
         }
 
