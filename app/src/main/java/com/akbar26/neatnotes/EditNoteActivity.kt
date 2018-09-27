@@ -25,9 +25,10 @@ class EditNoteActivity : AppCompatActivity() {
             val bundle:Bundle = intent.extras
             id = bundle.getInt("Id", 0)
             if (id!=0){
+                supportActionBar!!.title = "Update Note"
                 save_button.text = "Update"
-                title_edit_text.setText(bundle.getString("name"))
-                note_edit_text.setText(bundle.getString("desc"))
+                title_edit_text.setText(bundle.getString("Name"))
+                note_edit_text.setText(bundle.getString("Desc"))
             }
         } catch (ex:Exception){}
     }
