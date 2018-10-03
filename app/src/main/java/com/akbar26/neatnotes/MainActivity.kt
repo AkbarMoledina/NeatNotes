@@ -1,5 +1,6 @@
 package com.akbar26.neatnotes
 
+import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.SearchView
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -24,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        LoadQuery("%")
+        loadQuery("%")
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -36,26 +38,40 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        LoadQuery("%")
+        loadQuery("%")
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        menuInflater.inflate(R.menu.menu_main, menu)
-//        return true
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        val sv: android.support.v7.widget.SearchView = menu!!.findItem(R.id.app_bar_search).actionView as android.support.v7.widget.SearchView
+        val sm = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        sv.setSearchableInfo(sm.getSearchableInfo(componentName))
+
+        sv.setOnQueryTextListener(object: android.support.v7.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                loadQuery("%" + query + "%")
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                loadQuery("%" + newText + "%")
+                return false
+            }
+        })
+        return super.onCreateOptionsMenu(menu)
+    }
+
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        return when (item.itemId) {
+//            R.id.action_settings -> true
+//            else -> super.onOptionsItemSelected(item)
+//        }
 //    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun LoadQuery(title: String) {
+    private fun loadQuery(title: String) {
         var dbManager = DbManager(this)
         val projections = arrayOf("Id", "Title", "Description")
         val selectionArgs = arrayOf(title)
@@ -118,7 +134,7 @@ class MainActivity : AppCompatActivity() {
                 var dbManager = DbManager(this.context!!)
                 val selectionArgs = arrayOf(myNote.nodeId.toString())
                 dbManager.delete("ID=?", selectionArgs)
-                LoadQuery("%")
+                loadQuery("%")
             }
 
             return myView
